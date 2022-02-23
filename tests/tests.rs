@@ -3,3 +3,7 @@
 mod strings {
     mod string2list;
 }
+
+mod os {
+    mod runcmds;
+}

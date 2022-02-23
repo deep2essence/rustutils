@@ -11,3 +11,4 @@
 // }
 
 pub mod strings;
+pub mod os;
