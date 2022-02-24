@@ -12,3 +12,4 @@
 
 pub mod strings;
 pub mod os;
+pub mod types;

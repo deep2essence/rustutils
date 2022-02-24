@@ -1,9 +1,9 @@
 #!/usr/bin/env rust
 
-use rustutils::strings::string2list;
+use rustutils::strings::split;
 
 fn main(){
-    for item in string2list("a,b,c",",") {
+    for item in split(&"a,b,c",&",") {
         print!("{}\n",item);
     }
 }
