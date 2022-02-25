@@ -2,16 +2,20 @@
 
 use std::process::Command;
 use crate::strings::split;
-fn runcmd<'a>(command:&'a str) -> Vec<String> {
-    let args:Vec<&str>= split(&command,&" ");
-    let mut cmd = Command::new(args[0]);
+
+fn runcmd<'a>(command:String) -> Vec<String> {
+    let args= split(command," ");
+    if args.len() == 0 {
+        return vec![]
+    }
+    let mut cmd = Command::new(&args[0]);
     let output = cmd.args(&args[1..]).output();
     
     return vec![String::from_utf8_lossy(&output.unwrap().stdout).into_owned()]
 }
 
 pub fn runcmds<'a>(commands:&'a str) -> Vec<String> {
-    let cmds:Vec<&str> = split(&commands,&";");
+    let cmds = split(commands,";");
     let mut outputs:Vec<String> = vec![];
     for cmd in cmds {
         let output = runcmd(cmd);
@@ -35,13 +39,12 @@ pub fn list2file(filepath:&str,items:Vec<&str>){
 
 use std::fs::read_to_string;
 
-use crate::strings::splitEx;
 pub fn file2list<'a>(filepath:&'a str) -> Vec<String> {
     // let mut file = File::open(filepath).expect("unable to read file.");
     // let mut data = Vec::new();
     // file.read_to_string(&mut data).expect("unable to read string");
     let data:String = read_to_string(filepath).expect("unable to read file.");
-    let output:Vec<String> = splitEx(&data,&String::from("\n"));
+    let output:Vec<String> = split(data,"\n");
 
     return output
 

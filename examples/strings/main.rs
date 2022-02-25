@@ -1,9 +1,10 @@
 #!/usr/bin/env rust
 
+extern crate rustutils;
+use rustutils::print_result;
 use rustutils::strings::split;
 
 fn main(){
-    for item in split(&"a,b,c",&",") {
-        print!("{}\n",item);
-    }
+    print_result!(split("a,b,c,d",","));
+    // print_result!(vec!["a", "b", "c", "d"].merge(","))
 }

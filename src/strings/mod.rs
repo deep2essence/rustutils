@@ -3,86 +3,73 @@
 #![allow(dead_code)]
 
 // returning String is okay
-// returning &str is err
-
-// pub fn string2list<'a>(string:&'a str,sep:&'a str)-> Vec<&'a str>{
-//    let items:Vec<&'a str>=string.split(sep).collect();
-//     items
-// }
-
-// pub fn string2listex(line:String,sep:String) -> Vec<String> {
-//     let mut output = Vec::new();
-//     let items:Vec<&str>=line.as_str().split(sep.as_str()).collect();
-//     for item in items{
-//         output.push(String::from(item))
-//     }
-//     return output
-// }
-
-// pub fn list2string<'a>(items: Vec<&'a str>,sep:&'a str)-> String{
-//     let output = items.join(sep);
-//     output
-// }
-
-// pub fn list2stringex(items: Vec<String>,sep:String)-> String{
-//     let output = items.join(sep.as_str());
-//     output
-// }
-
-pub fn join<T: AsRef<str>>(items: &[T], sep:&str) -> String {
-    let mut output = String::new();
-    for item in items {
-        output.push_str(item.as_ref());
-        output.push_str(sep);
-    }
-    String::from(&output[0..output.len()-sep.len()])
+// returning &str is unstable
+// evolutions
+// 1. seperated functions for both String and &str
+// 2. use AsRef & T, Any to accept both String and &str
+// 3. use trait & impl to insert function to String and &str respectively. 
+// 4. pub impl is not supported, trait->impl->fn: fn can be pubed.
+pub trait SplitString {
+    fn splited(&self,seq:&str) -> Vec<String>;
 }
 
-use std::any::Any;
-use crate::types::is_string;
-
-pub fn joinEx(a:&dyn Any,b:&dyn Any) -> String {
-    let output = String::new();
-    let seq:String;
-    if !is_string(b) {
-        return output
-    }
- 
-    if let Some(v) = b.downcast_ref::<&str>() {
-        seq = String::from(*v);
-    } else if let Some(v) = b.downcast_ref::<String>() {
-        seq = v.clone();
-    } else {
-        return output
-    }
-    if let Some(v) = a.downcast_ref::<Vec<&str>>() {
-        return join(v,seq.as_str());
-    } else if let Some(v) = a.downcast_ref::<Vec<String>>() 
-    {
-        return join(v,seq.as_str());
-    } else {
-        return output;
+impl SplitString for String {
+    fn splited(&self,seq:&str) -> Vec<String> {
+        let mut output = Vec::new();
+        let items:Vec<&str>=self.as_str().split(seq).collect();
+        for item in items{
+            output.push(String::from(item))
+        }
+        return output        
     }
 }
 
-pub fn split<'a, T: AsRef<str>>(line: &'a T, sep:&'a str) -> Vec<&'a str> {
-    let items:Vec<&str>=line.as_ref().split(sep).collect();
-    items 
+impl SplitString for &str {
+    fn splited(&self,seq:&str) -> Vec<String> {
+        let mut output = Vec::new();
+        let items:Vec<&str>=self.split(seq).collect();
+        for item in items{
+            output.push(String::from(item))
+        }
+        return output        
+    }
 }
 
-pub fn splitEx<'a, T: AsRef<str>>(a: &'a T, b:&dyn Any) -> Vec<String> {
-    let mut output = Vec::new();
-    let seq:String;
-    if let Some(v) = b.downcast_ref::<&str>() {
-        seq = String::from(*v);
-    } else if let Some(v) = b.downcast_ref::<String>() {
-        seq = v.clone();
-    } else {
-        return output
+impl SplitString for &&str {
+    fn splited(&self,seq:&str) -> Vec<String> {
+        let mut output = Vec::new();
+        let items:Vec<&str>=self.split(seq).collect();
+        for item in items{
+            output.push(String::from(item))
+        }
+        return output        
     }
-    let items:Vec<&str>=a.as_ref().split(seq.as_str()).collect();
-    for item in items{
-        output.push(String::from(item));
-    }
-    return output
+}
+
+pub fn split<T:SplitString>(line:T,seq:&str) -> Vec<String> 
+{
+    line.splited(seq)
+}
+
+pub trait MergeString {
+    fn merge(&self,seq:&str) -> String;
+}
+
+impl MergeString for Vec<String> {
+    fn merge(&self,seq:&str) -> String {
+        let output = self.join(seq);
+        output     
+    }    
+}
+
+impl MergeString for Vec<&str> {
+    fn merge(&self,seq:&str) -> String {
+        let output = self.join(seq);
+        output     
+    }    
+}
+
+pub fn merge<T:MergeString>(line:T,seq:&str) -> String
+{
+    line.merge(seq)
 }

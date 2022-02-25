@@ -14,6 +14,7 @@ fn main(){
     // .inspect(|x| errs.extend(x.clone().err()))
     .flatten()
     .collect();
+
     print!("filtered {:?}\n",filtered);
     // use rustutils::types::type_of;
     // print!("filtered {:?}\n",type_of(filtered));
@@ -61,8 +62,7 @@ fn main(){
     // unwrap vs. collect
     // collect returns err if err exists,
     // and all Oks as vec if no errs.
-    // unwrap returns only Ok
-    // collec for Vec<Result>, unwrap for Result
+    // unwrap returns only Ok  
 
     fn test2(class:Option<u8>) -> Result<&'static str,bool> {
         match class {
