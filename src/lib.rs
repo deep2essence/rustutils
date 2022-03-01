@@ -50,3 +50,24 @@ macro_rules! print_comp {
         print_comp!($($y),+);
     };
 }
+
+#[macro_export]
+macro_rules! print_compx {
+    ($($arg:expr),+) => {
+        let mut s = String::new();
+        $(
+            s += String::from($arg).as_str();
+            s += ",";
+        )*
+        s.remove(s.len()-1);
+        print_simple!(s);
+    };
+}
+
+#[macro_export]
+macro_rules! print_compt {
+    ($($arg:expr),+) => {
+        // print_compx!($($arg),*);
+        print_compx!($($arg),+);
+    };
+}
